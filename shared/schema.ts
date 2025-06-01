@@ -15,7 +15,7 @@ export const messages = pgTable("messages", {
   content: text("content").notNull(),
   imageUrl: text("image_url"),
   editedImageUrl: text("edited_image_url"),
-  metadata: jsonb("metadata"),
+  metadata: jsonb("metadata").$type<{ status?: string; error?: string; originalPrompt?: string; seed?: number }>(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

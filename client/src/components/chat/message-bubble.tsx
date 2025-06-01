@@ -56,7 +56,7 @@ export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
         )}
 
         {/* Message Content */}
-        <p className="whitespace-pre-wrap">{String(message.content)}</p>
+        <p className="whitespace-pre-wrap">{message.content || ""}</p>
 
         {/* Processing Indicator */}
         {isProcessing && (

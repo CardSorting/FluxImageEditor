@@ -134,7 +134,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const assistantMessage = await storage.createMessage({
             chatId,
             role: "assistant",
-            content: "Hello! Please upload an image and tell me what you'd like to edit. I can enhance colors, add objects, remove backgrounds, and much more based on your natural language descriptions.",
+            content: "Hello! I'm your DreamBees Art assistant. Please upload an image and describe your creative vision. I can enhance colors, transform scenes, add artistic effects, and bring your imagination to life through AI-powered editing.",
           });
           res.json([userMessage, assistantMessage]);
         } else {
