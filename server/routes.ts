@@ -43,6 +43,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedChat = insertChatSchema.parse(req.body);
       const chat = await storage.createChat(validatedChat);
+      
+      // Create initial welcome message
+      await storage.createMessage({
+        chatId: chat.id,
+        role: "assistant",
+        content: "Hello! I'm your DreamBees Art assistant, ready to transform your images into artistic visions. Upload an image and describe your creative ideas - I'll bring them to life with AI-powered editing."
+      });
+      
       res.json(chat);
     } catch (error) {
       console.error("Error creating chat:", error);
