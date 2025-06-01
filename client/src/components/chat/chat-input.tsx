@@ -72,7 +72,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="text-gray-400 hover:text-green-600"
+            className="text-gray-400 hover:text-yellow-600"
             onClick={() => setShowUpload(!showUpload)}
             disabled={disabled}
           >
@@ -85,7 +85,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Describe what you'd like to edit about your image..."
-              className="resize-none border border-gray-300 rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:border-green-600 transition-colors max-h-32"
+              className="resize-none border border-gray-300 rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:border-yellow-600 transition-colors max-h-32"
               rows={1}
               disabled={disabled}
             />
@@ -94,7 +94,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
               onClick={handleSend}
               disabled={disabled || (!message.trim() && !uploadedImageUrl)}
               size="icon"
-              className="absolute right-2 bottom-2 bg-green-600 hover:bg-green-700 text-white rounded-full disabled:bg-gray-300"
+              className="absolute right-2 bottom-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-full disabled:bg-gray-300"
             >
               <Send className="w-4 h-4" />
             </Button>

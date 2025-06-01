@@ -120,22 +120,22 @@ export default function ChatPage() {
             >
               <Menu className="w-5 h-5" />
             </Button>
-            <h1 className="text-lg font-semibold text-gray-900">Kontext AI</h1>
+            <h1 className="text-lg font-semibold text-gray-900">DreamBees Art</h1>
             <div className="w-10" />
           </div>
 
           {/* Welcome Content */}
           <div className="flex-1 flex items-center justify-center p-4">
             <div className="text-center max-w-md">
-              <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🎨</span>
+              <div className="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">🐝</span>
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome to Kontext AI</h1>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome to DreamBees Art</h1>
               <p className="text-gray-600 mb-6">
-                Your intelligent image editing assistant. Upload an image and describe what you'd like to change.
+                Your creative AI companion for artistic image editing. Upload an image and describe your vision - we'll bring it to life.
               </p>
-              <Button onClick={handleNewChat} className="bg-green-600 hover:bg-green-700">
-                Start New Chat
+              <Button onClick={handleNewChat} className="bg-yellow-600 hover:bg-yellow-700">
+                Start Creating
               </Button>
             </div>
           </div>

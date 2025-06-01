@@ -42,7 +42,7 @@ export function ImageUpload({ onImageUploaded, onClose }: ImageUploadProps) {
   });
 
   return (
-    <div className="mb-4 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-600 transition-colors cursor-pointer relative">
+    <div className="mb-4 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-yellow-600 transition-colors cursor-pointer relative">
       <Button
         variant="ghost"
         size="icon"
@@ -52,13 +52,13 @@ export function ImageUpload({ onImageUploaded, onClose }: ImageUploadProps) {
         <X className="w-4 h-4" />
       </Button>
       
-      <div {...getRootProps()} className={`${isDragActive ? 'border-green-600 bg-green-50' : ''}`}>
+      <div {...getRootProps()} className={`${isDragActive ? 'border-yellow-600 bg-yellow-50' : ''}`}>
         <input {...getInputProps()} />
         <CloudUpload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
         {isUploading ? (
           <p className="text-gray-600">Uploading image...</p>
         ) : isDragActive ? (
-          <p className="text-green-600">Drop the image here...</p>
+          <p className="text-yellow-600">Drop the image here...</p>
         ) : (
           <>
             <p className="text-gray-600">Drag & drop an image here, or click to browse</p>

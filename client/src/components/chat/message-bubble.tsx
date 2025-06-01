@@ -56,7 +56,7 @@ export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
         )}
 
         {/* Message Content */}
-        <p className="whitespace-pre-wrap">{message.content}</p>
+        <p className="whitespace-pre-wrap">{String(message.content)}</p>
 
         {/* Processing Indicator */}
         {isProcessing && (
@@ -101,7 +101,7 @@ export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
               <Button 
                 onClick={() => handleDownload(message.editedImageUrl!)}
                 size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-yellow-600 hover:bg-yellow-700 text-white"
               >
                 <Download className="w-4 h-4 mr-2" />
                 Download
