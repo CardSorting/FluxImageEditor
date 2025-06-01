@@ -9,7 +9,7 @@ interface MessageBubbleProps {
 
 export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
   const isUser = message.role === "user";
-  const isProcessing = message.metadata?.status === "processing";
+  const isProcessing = message.metadata && typeof message.metadata === 'object' && 'status' in message.metadata && message.metadata.status === "processing";
 
   const handleDownload = async (imageUrl: string) => {
     try {
@@ -34,14 +34,14 @@ export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
       isUser ? 'justify-end' : ''
     }`}>
       {!isUser && (
-        <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
-          <Bot className="w-4 h-4 text-white" />
+        <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+          <span className="text-sm">🐝</span>
         </div>
       )}
       
       <div className={`max-w-2xl rounded-2xl p-4 shadow-sm ${
         isUser 
-          ? 'bg-green-600 text-white rounded-tr-md' 
+          ? 'bg-yellow-600 text-white rounded-tr-md' 
           : 'bg-white text-gray-800 rounded-tl-md'
       }`}>
         {/* Image Upload */}
@@ -63,14 +63,14 @@ export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
           <div className="bg-gray-50 rounded-lg p-4 mt-3">
             <div className="flex items-center space-x-3">
               <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-green-600 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-green-600 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                <div className="w-2 h-2 bg-green-600 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                <div className="w-2 h-2 bg-yellow-600 rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-yellow-600 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                <div className="w-2 h-2 bg-yellow-600 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
               </div>
-              <span className="text-sm text-gray-600">Processing your image...</span>
+              <span className="text-sm text-gray-600">Creating your artistic vision...</span>
             </div>
             <div className="mt-2 bg-gray-200 rounded-full h-2">
-              <div className="bg-green-600 h-2 rounded-full transition-all duration-1000" style={{width: '75%'}}></div>
+              <div className="bg-yellow-600 h-2 rounded-full transition-all duration-1000" style={{width: '75%'}}></div>
             </div>
           </div>
         )}

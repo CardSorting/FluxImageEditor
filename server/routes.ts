@@ -216,7 +216,7 @@ async function processImageEdit(messageId: number, imageUrl: string, prompt: str
       content: "I'm sorry, I encountered an error while processing your image. The editing service might be temporarily unavailable. Please try again in a moment.",
       metadata: { 
         status: "error",
-        error: error.message 
+        error: error instanceof Error ? error.message : String(error)
       }
     });
   }

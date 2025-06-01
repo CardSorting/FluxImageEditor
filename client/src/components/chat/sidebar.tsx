@@ -39,10 +39,10 @@ export function Sidebar({ currentChatId, onChatSelect, onNewChat, isOpen, onTogg
         <div className="p-4 border-b border-gray-700">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                <Image className="w-4 h-4 text-white" />
+              <div className="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center">
+                <span className="text-lg">🐝</span>
               </div>
-              <h1 className="text-lg font-semibold">Kontext AI</h1>
+              <h1 className="text-lg font-semibold">DreamBees Art</h1>
             </div>
             <Button
               variant="ghost"
@@ -59,10 +59,10 @@ export function Sidebar({ currentChatId, onChatSelect, onNewChat, isOpen, onTogg
         <div className="p-4">
           <Button 
             onClick={onNewChat}
-            className="w-full bg-gray-800 hover:bg-gray-700 text-white"
+            className="w-full bg-yellow-600 hover:bg-yellow-700 text-white"
           >
             <Plus className="w-4 h-4 mr-2" />
-            New Chat
+            New Creation
           </Button>
         </div>
 
