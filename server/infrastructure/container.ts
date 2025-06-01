@@ -27,6 +27,7 @@ export class Container {
   // Controllers
   public readonly chatController = new ChatController(
     this.createChatHandler,
+    this.createMessageHandler,
     this.getChatsHandler
   );
 

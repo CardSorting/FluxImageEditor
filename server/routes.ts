@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { container } from "./infrastructure/container";
 import { insertChatSchema, insertMessageSchema } from "@shared/schema";
 import { fal } from "@fal-ai/client";
 import multer from "multer";
@@ -28,50 +28,18 @@ fal.config({
 export async function registerRoutes(app: Express): Promise<Server> {
   
   // Get all chats
-  app.get("/api/chats", async (req, res) => {
-    try {
-      const chats = await storage.getChats();
-      res.json(chats);
-    } catch (error) {
-      console.error("Error fetching chats:", error);
-      res.status(500).json({ message: "Failed to fetch chats" });
-    }
+  app.get("/api/chats", (req, res) => {
+    container.chatController.getChats(req, res);
   });
 
   // Create new chat
-  app.post("/api/chats", async (req, res) => {
-    try {
-      const validatedChat = insertChatSchema.parse(req.body);
-      const chat = await storage.createChat(validatedChat);
-      
-      // Create initial welcome message
-      await storage.createMessage({
-        chatId: chat.id,
-        role: "assistant",
-        content: "Hello! I'm your DreamBees Art assistant, ready to transform your images into artistic visions. Upload an image and describe your creative ideas - I'll bring them to life with AI-powered editing."
-      });
-      
-      res.json(chat);
-    } catch (error) {
-      console.error("Error creating chat:", error);
-      res.status(400).json({ message: "Invalid chat data" });
-    }
+  app.post("/api/chats", (req, res) => {
+    container.chatController.createChat(req, res);
   });
 
   // Get messages for a chat
-  app.get("/api/chats/:chatId/messages", async (req, res) => {
-    try {
-      const chatId = parseInt(req.params.chatId);
-      if (isNaN(chatId)) {
-        return res.status(400).json({ message: "Invalid chat ID" });
-      }
-
-      const messages = await storage.getMessagesByChatId(chatId);
-      res.json(messages);
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-      res.status(500).json({ message: "Failed to fetch messages" });
-    }
+  app.get("/api/chats/:chatId/messages", (req, res) => {
+    container.messageController.getMessages(req, res);
   });
 
   // Upload image and get URL
