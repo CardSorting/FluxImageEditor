@@ -1,6 +1,4 @@
 import { chats, messages, type Chat, type Message, type InsertChat, type InsertMessage } from "@shared/schema";
-import { db } from "./db";
-import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // Chat operations
@@ -14,44 +12,68 @@ export interface IStorage {
   updateMessage(id: number, updates: Partial<Message>): Promise<Message | undefined>;
 }
 
-export class DatabaseStorage implements IStorage {
+export class MemStorage implements IStorage {
+  private chats: Map<number, Chat>;
+  private messages: Map<number, Message>;
+  private currentChatId: number;
+  private currentMessageId: number;
+
+  constructor() {
+    this.chats = new Map();
+    this.messages = new Map();
+    this.currentChatId = 1;
+    this.currentMessageId = 1;
+  }
+
   async createChat(insertChat: InsertChat): Promise<Chat> {
-    const [chat] = await db
-      .insert(chats)
-      .values(insertChat)
-      .returning();
+    const id = this.currentChatId++;
+    const chat: Chat = {
+      ...insertChat,
+      id,
+      createdAt: new Date(),
+    };
+    this.chats.set(id, chat);
     return chat;
   }
 
   async getChats(): Promise<Chat[]> {
-    return await db.select().from(chats).orderBy(chats.createdAt);
+    return Array.from(this.chats.values()).sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   }
 
   async getChatById(id: number): Promise<Chat | undefined> {
-    const [chat] = await db.select().from(chats).where(eq(chats.id, id));
-    return chat || undefined;
+    return this.chats.get(id);
   }
 
   async createMessage(insertMessage: InsertMessage): Promise<Message> {
-    const [message] = await db
-      .insert(messages)
-      .values(insertMessage)
-      .returning();
+    const id = this.currentMessageId++;
+    const message: Message = {
+      ...insertMessage,
+      id,
+      createdAt: new Date(),
+      imageUrl: insertMessage.imageUrl || null,
+      editedImageUrl: insertMessage.editedImageUrl || null,
+      metadata: insertMessage.metadata || null,
+    };
+    this.messages.set(id, message);
     return message;
   }
 
   async getMessagesByChatId(chatId: number): Promise<Message[]> {
-    return await db.select().from(messages).where(eq(messages.chatId, chatId)).orderBy(messages.createdAt);
+    return Array.from(this.messages.values())
+      .filter(message => message.chatId === chatId)
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
   }
 
   async updateMessage(id: number, updates: Partial<Message>): Promise<Message | undefined> {
-    const [message] = await db
-      .update(messages)
-      .set(updates)
-      .where(eq(messages.id, id))
-      .returning();
-    return message || undefined;
+    const message = this.messages.get(id);
+    if (!message) return undefined;
+    
+    const updatedMessage = { ...message, ...updates };
+    this.messages.set(id, updatedMessage);
+    return updatedMessage;
   }
 }
 
-export const storage = new DatabaseStorage();
+export const storage = new MemStorage();
