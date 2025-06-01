@@ -50,7 +50,7 @@ export default function ChatPage() {
       
       // If assistant is processing, show typing indicator briefly
       const assistantMessage = newMessages.find(m => m.role === "assistant");
-      if (assistantMessage?.metadata?.status === "processing") {
+      if (assistantMessage?.metadata && typeof assistantMessage.metadata === 'object' && 'status' in assistantMessage.metadata && assistantMessage.metadata.status === "processing") {
         setShowTyping(true);
         setTimeout(() => setShowTyping(false), 2000);
         
@@ -61,7 +61,7 @@ export default function ChatPage() {
           // Stop polling when message is complete
           const updatedMessages = queryClient.getQueryData<Message[]>(["/api/chats", currentChatId, "messages"]);
           const currentMessage = updatedMessages?.find(m => m.id === assistantMessage.id);
-          if (currentMessage?.metadata?.status !== "processing") {
+          if (currentMessage?.metadata && typeof currentMessage.metadata === 'object' && 'status' in currentMessage.metadata && currentMessage.metadata.status !== "processing") {
             clearInterval(pollInterval);
           }
         }, 3000);
@@ -176,12 +176,12 @@ export default function ChatPage() {
             ) : messages.length === 0 ? (
               <div className="text-center">
                 <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-white text-sm">🤖</span>
+                  <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm">🐝</span>
                   </div>
                   <div className="bg-white rounded-2xl rounded-tl-md p-4 shadow-sm max-w-2xl">
                     <p className="text-gray-800">
-                      Hello! I'm Kontext AI, your intelligent image editing assistant. Upload an image and tell me what you'd like to change. I can understand context and make precise edits based on your natural language descriptions.
+                      Hello! I'm your DreamBees Art assistant, ready to transform your images into artistic visions. Upload an image and describe your creative ideas - I'll bring them to life with AI-powered editing.
                     </p>
                     <div className="mt-3 flex flex-wrap gap-2">
                       <button 
