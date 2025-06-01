@@ -65,62 +65,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Create message and process with FLUX if needed
-  app.post("/api/chats/:chatId/messages", async (req, res) => {
-    try {
-      const chatId = parseInt(req.params.chatId);
-      if (isNaN(chatId)) {
-        return res.status(400).json({ message: "Invalid chat ID" });
-      }
-
-      const validatedMessage = insertMessageSchema.parse({
-        ...req.body,
-        chatId
-      });
-
-      // Create the user message
-      const userMessage = await storage.createMessage(validatedMessage);
-
-      // If this is a user message with an image and editing prompt, process with FLUX
-      if (validatedMessage.role === "user" && validatedMessage.imageUrl && validatedMessage.content) {
-        try {
-          // Create assistant response message
-          const assistantMessage = await storage.createMessage({
-            chatId,
-            role: "assistant",
-            content: "I'll help you edit that image. Let me process your request...",
-            metadata: { status: "processing" }
-          });
-
-          // Process with FLUX Kontext in background
-          processImageEdit(assistantMessage.id, validatedMessage.imageUrl, validatedMessage.content);
-
-          res.json([userMessage, assistantMessage]);
-        } catch (error) {
-          console.error("Error starting image processing:", error);
-          const errorMessage = await storage.createMessage({
-            chatId,
-            role: "assistant",
-            content: "I'm sorry, I encountered an error while trying to process your image. Please try again.",
-          });
-          res.json([userMessage, errorMessage]);
-        }
-      } else {
-        // Regular message without image editing
-        if (validatedMessage.role === "user") {
-          const assistantMessage = await storage.createMessage({
-            chatId,
-            role: "assistant",
-            content: "Hello! I'm your DreamBees Art assistant. Please upload an image and describe your creative vision. I can enhance colors, transform scenes, add artistic effects, and bring your imagination to life through AI-powered editing.",
-          });
-          res.json([userMessage, assistantMessage]);
-        } else {
-          res.json([userMessage]);
-        }
-      }
-    } catch (error) {
-      console.error("Error creating message:", error);
-      res.status(400).json({ message: "Invalid message data" });
-    }
+  app.post("/api/chats/:chatId/messages", (req, res) => {
+    container.messageController.createMessage(req, res);
   });
 
   // Get processing status for a message
@@ -144,56 +90,4 @@ export async function registerRoutes(app: Express): Promise<Server> {
   return httpServer;
 }
 
-// Background function to process image editing
-async function processImageEdit(messageId: number, imageUrl: string, prompt: string) {
-  try {
-    console.log(`Processing image edit for message ${messageId}: ${prompt}`);
-    
-    const result = await fal.subscribe("fal-ai/flux-pro/kontext", {
-      input: {
-        prompt: prompt,
-        image_url: imageUrl,
-        guidance_scale: 3.5,
-        num_images: 1,
-        safety_tolerance: "2",
-        output_format: "jpeg"
-      },
-      logs: true,
-      onQueueUpdate: (update) => {
-        if (update.status === "IN_PROGRESS") {
-          console.log(`Processing update for message ${messageId}:`, update.logs?.map(log => log.message).join(", "));
-        }
-      },
-    });
 
-    if (result.data && result.data.images && result.data.images.length > 0) {
-      const editedImageUrl = result.data.images[0].url;
-      
-      // Update the assistant message with the result
-      await storage.updateMessage(messageId, {
-        content: "Perfect! I've successfully edited your image based on your request. Here's the result:",
-        editedImageUrl,
-        metadata: { 
-          status: "completed",
-          originalPrompt: prompt,
-          seed: result.data.seed
-        }
-      });
-      
-      console.log(`Successfully processed image edit for message ${messageId}`);
-    } else {
-      throw new Error("No images returned from FLUX API");
-    }
-  } catch (error) {
-    console.error(`Error processing image edit for message ${messageId}:`, error);
-    
-    // Update message with error
-    await storage.updateMessage(messageId, {
-      content: "I'm sorry, I encountered an error while processing your image. The editing service might be temporarily unavailable. Please try again in a moment.",
-      metadata: { 
-        status: "error",
-        error: error instanceof Error ? error.message : String(error)
-      }
-    });
-  }
-}
